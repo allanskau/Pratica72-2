@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -34,21 +35,81 @@ public class Pratica72 {
         
         ContadorPalavras contador = new ContadorPalavras(pathname);
         Map<String, Integer> palavras = contador.getPalavras();
-        
-        String ocorrencias_palavras;
-        List<String> lista = new ArrayList<>();
-        for(Map.Entry<String, Integer> entry : palavras.entrySet()){
-            ocorrencias_palavras = entry.getValue().toString().concat(",").concat(entry.getKey());
-            System.out.println(ocorrencias_palavras);
-            lista.add(ocorrencias_palavras);
+//////////////////////////////////////////////////////////////////////////////////
+        class PalavrasOcorrencias{
+            String palavra;
+            Integer ocorrencia;
+
+            public PalavrasOcorrencias() {
+            }
+
+            public PalavrasOcorrencias(String palavra, Integer ocorrencia) {
+                this.palavra = palavra;
+                this.ocorrencia = ocorrencia;
+            }
+            
+
+            public String getPalavra() {
+                return palavra;
+            }
+
+            public void setPalavra(String palavra) {
+                this.palavra = palavra;
+            }
+
+            public Integer getOcorrencia() {
+                return ocorrencia;
+            }
+
+            public void setOcorrencia(Integer ocorrencia) {
+                this.ocorrencia = ocorrencia;
+            }            
         }
-        Collections.sort(lista);
-        Collections.reverse(lista);
+//////////////////////////////////////////////////////////////////////////////////
+        
+        
+        List<PalavrasOcorrencias> lista = new ArrayList<>();
+        for(Map.Entry<String, Integer> entry : palavras.entrySet()){
+            PalavrasOcorrencias word = new PalavrasOcorrencias(){};
+            word.setOcorrencia(entry.getValue());
+            word.setPalavra(entry.getKey());
+            //System.out.println(ocorrencias_palavras);
+            lista.add(word);
+        }
+        
+//////////////////////////////////////////////////////////////////////////////////
+        class Comparador implements Comparator<PalavrasOcorrencias>{
+
+            public Comparador() {
+            }
+
+            private int comparaOcorrencia(PalavrasOcorrencias p1, PalavrasOcorrencias p2) {
+                return -(p1.getOcorrencia() - p2.getOcorrencia());
+            }
+
+            private int comparaPalavra(PalavrasOcorrencias p1, PalavrasOcorrencias p2) {
+                return p1.getPalavra().compareTo(p2.getPalavra());
+            }
+            
+            public int compare(PalavrasOcorrencias p1, PalavrasOcorrencias p2) {
+                int comp;
+                comp = comparaOcorrencia(p1, p2);
+                if (comp == 0) 
+                    comp = comparaPalavra(p1, p2);
+                return comp;
+            }
+        }
+//////////////////////////////////////////////////////////////////////////////////
+        Comparador comparador = new Comparador();
+        //Collections.sort(lista);
+        //Collections.reverse(lista);
+        Collections.sort(lista, comparador);
+        //Collections.reverse(lista);
         System.out.println("criou arquivo");
         BufferedWriter arquivo = new BufferedWriter(new FileWriter(pathname.concat(".out")));
-        for(String list: lista){
-            System.out.println(list);
-            arquivo.write(list);
+        for(PalavrasOcorrencias list: lista){
+            //System.out.println(list);
+            arquivo.write(list.getPalavra() + "," + list.getOcorrencia());
             arquivo.newLine();
         }
         arquivo.close();

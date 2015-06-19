@@ -24,15 +24,12 @@ import java.util.regex.Pattern;
  */
 public class ContadorPalavras {
 
-    private String pathname;
     private BufferedReader reader;
-    private FileReader file;
     
     public ContadorPalavras() {
     }
 
     public ContadorPalavras(String pathname) throws FileNotFoundException, UnsupportedEncodingException {
-        this.pathname = pathname;
         if (pathname == null) { 
             System.err.println("ERRO: eh preciso especificar o nome do arquivo"); 
             System.err.println("Uso: java ContaPalavras arquivo_texto"); 
